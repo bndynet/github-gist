@@ -1,9 +1,10 @@
 import { Config } from '.';
 
 const config: Config = {
-    clientId: '500bd7533a',
-    clientSecret: 'bc55228ce6c70e97f4ee',
-    oauthBaseURL: 'http://localhost:9110/',
+    clientId: 'eb6ab71a97ef2692d857',
+    clientSecret: '014e9f84049964807d751c81658d133a1e37acd3',
+    authorizationCallbackUri: 'http://localhost:8080/auth/callback',
+    authorizationUri: 'http://localhost:9100/authorize',
 };
 
 module.exports = config;

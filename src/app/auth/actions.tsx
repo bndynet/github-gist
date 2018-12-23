@@ -1,32 +1,27 @@
 import {
-    ACTION_LOGIN_REQUEST,
-    ACTION_LOGIN_SUCCESS,
+    ACTION_AUTH_REQUEST,
+    ACTION_AUTH_SUCCESS,
     ACTION_LOGOUT_REQUEST,
     ACTION_LOGOUT_SUCCESS,
     ACTION_GETUSER_REQUEST,
     ACTION_GETUSER_SUCCESS,
-    LoginData,
-    LoginSuccessData,
     UserInfo,
-    ACTION_LOGIN_FAILURE,
+    service,
 } from '.';
 
 const authActions = {
-    login: (data: LoginData) => ({
-        type: ACTION_LOGIN_REQUEST,
-        payload: data,
+    auth: () => {
+        service.auth();
+        return {
+            type: ACTION_AUTH_REQUEST,
+        };
+    },
+    authSuccess: (token: string) => ({
+        type: ACTION_AUTH_SUCCESS,
+        payload: token,
     }),
-    loginSuccess: (response: LoginSuccessData) => ({
-        type: ACTION_LOGIN_SUCCESS,
-        payload: response,
-    }),
-    loginFailure: (error) => ({
-        type: ACTION_LOGIN_FAILURE,
-        payload: error,
-    }),
-    getUserInfo: (accessToken: string) => ({
+    getUserInfo: () => ({
         type: ACTION_GETUSER_REQUEST,
-        payload: accessToken,
     }),
     getUserInfoSuccess: (userInfo: UserInfo) => ({
         type: ACTION_GETUSER_SUCCESS,

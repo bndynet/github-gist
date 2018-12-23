@@ -1,29 +1,35 @@
 import { AxiosPromise } from 'axios';
-import { LoginData } from '.';
 import { Ajax } from '../../helpers/ajax';
+import { instance } from '../../helpers/url';
 import config from '../../config';
-import store from '../../redux/store';
+
+import actions from './actions';
+import { getState } from './';
 
 const service = {
-    login: (data: LoginData) => {
-        data.grant_type = 'password';
-        data.client_id = config.clientId;
-        data.client_secret = config.clientSecret;
-        return new Ajax({
-            baseURL: config.oauthBaseURL,
-        }).postForm('/oauth/token', data);
+    auth: (): void => {
+        location.href = `${config.authorizationUri}?redirect_uri=${config.authorizationCallbackUri}&target=github`;
+    },
+    getErrorFromUrl: (): string => {
+        const url = instance();
+        return url.queries.error_description as string;
+    },
+    getTokenFromUrl: (): string => {
+        const url = instance();
+        return url.queries.access_token as string;
     },
     getUser: (): AxiosPromise => {
         return new Ajax({
-            baseURL: config.oauthBaseURL,
-            headerAuthorization: () => `${store.getState().auth.tokenType} ${store.getState().auth.accessToken}`,
-        }).get('/oauth/me');
+            baseURL: config.userUri,
+            headerAuthorization: () => `Bearer ${getState().accessToken}`,
+        }).get('');
     },
-    logout: (): AxiosPromise => {
-        return new Ajax({
-            baseURL: config.oauthBaseURL,
-            headerAuthorization: () => `${store.getState().auth.tokenType} ${store.getState().auth.accessToken}`,
-        }).get('/login?logout');
+    logout: (logoutGitHub?: boolean) => {
+        if (logoutGitHub) {
+            location.href = config.logoutUri;
+        } else {
+            actions.logout();
+        }
     },
 };
 

@@ -10,7 +10,7 @@ import { Typography } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 
-import authActions from '../auth/actions';
+import { actions as authActions, getState as getAuthState, UserInfo } from '../auth';
 import homeActions from './actions';
 import globalActions from '../global/actions';
 
@@ -58,10 +58,9 @@ const styles = (theme: Theme) =>
     });
 
 interface HomeComponentProps {
-    history: any;
     classes: any;
-    user: any;
     readme: string;
+    onLogin(): void;
     onLogout(): void;
     onPreLogout(): void;
     onGetReadme(): void;
@@ -74,6 +73,7 @@ interface HomeComponentState {
 
 class HomeComponent extends React.Component<HomeComponentProps, HomeComponentState> {
     private interval: any;
+    private user: UserInfo;
 
     constructor(props: HomeComponentProps) {
         super(props);
@@ -82,6 +82,7 @@ class HomeComponent extends React.Component<HomeComponentProps, HomeComponentSta
         this.state = {
             logoutDelay: null,
         };
+        this.user = getAuthState().user;
     }
 
     public componentWillMount() {
@@ -90,8 +91,8 @@ class HomeComponent extends React.Component<HomeComponentProps, HomeComponentSta
 
     public render() {
         const { classes } = this.props;
-        const btn = this.props.user ? (
-            <Tooltip title={this.props.user.username}>
+        const btn = this.user ? (
+            <Tooltip title={this.user.name}>
                 <Button
                     disabled={!!this.state.logoutDelay}
                     classes={{ root: classes.fab, disabled: 'disabled' }}
@@ -101,7 +102,7 @@ class HomeComponent extends React.Component<HomeComponentProps, HomeComponentSta
                     {this.state.logoutDelay && this.state.logoutDelay > 0 ? (
                         this.state.logoutDelay
                     ) : (
-                        this.props.user.username[0]
+                        this.user.name[0]
                     )}
                 </Button>
             </Tooltip>
@@ -170,17 +171,19 @@ class HomeComponent extends React.Component<HomeComponentProps, HomeComponentSta
     }
 
     private handleLogin() {
-        this.props.history.push('/login');
+        this.props.onLogin();
     }
 
 }
 
 const mapStateToProps = (state) => ({
-    user: state.auth.user,
     readme: state.home.readme,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({
+    onLogin: () => {
+        dispatch(authActions.auth());
+    },
     onLogout: () => {
         dispatch(authActions.logout());
     },

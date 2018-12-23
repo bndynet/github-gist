@@ -1,16 +1,11 @@
-import { AuthState, ACTION_LOGIN_REQUEST, ACTION_LOGIN_SUCCESS, ACTION_LOGOUT_REQUEST, ACTION_GETUSER_SUCCESS } from '.';
+import { AuthState, ACTION_LOGOUT_REQUEST, ACTION_GETUSER_SUCCESS, ACTION_AUTH_SUCCESS } from '.';
 
 export function auth(state: AuthState = {}, action): AuthState {
     switch (action.type) {
-        case ACTION_LOGIN_REQUEST:
-            return { ...state };
-        case ACTION_LOGIN_SUCCESS:
+        case ACTION_AUTH_SUCCESS:
             return {
                 ...state,
-                accessToken: action.payload.access_token,
-                tokenType: action.payload.token_type,
-                expiresIn: action.payload.expires_in,
-                scope: action.payload.scope,
+                accessToken: action.payload,
             };
         case ACTION_GETUSER_SUCCESS:
             return {

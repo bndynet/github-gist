@@ -24,7 +24,7 @@ import BrightnessHighIcon from '@material-ui/icons/BrightnessHigh';
 import BrightnessLowIcon from '@material-ui/icons/BrightnessLow';
 
 import AdminMenuComponent from './AdminMenuComponent';
-import authActions from '../auth/actions';
+import { actions as authActions, getState as getAuthState, UserInfo } from '../auth';
 import { themeConfig } from '../../theme';
 import routes from './routes';
 import globalActions from '../global/actions';
@@ -174,29 +174,36 @@ const styles = (theme: Theme) =>
 
 class AdminComponent extends React.Component<
     {
-        user: any;
         classes: any;
         history: any;
         isDarkTheme: boolean;
         width: Breakpoint;
         push: (path: string) => void;
+        onAuth: () => void;
         onLogout: () => void;
         onThemeChange: (toDark: boolean) => void;
     },
     { largeMainMenu: boolean; avatarMenuAnchor: any }
 > {
+    private user: UserInfo;
+
     constructor(props) {
         super(props);
         this.state = {
             largeMainMenu: isWidthUp('sm', this.props.width),
             avatarMenuAnchor: null,
         };
+
+        this.user = getAuthState().user;
+        if (!this.user) {
+            this.props.onAuth();
+        }
     }
 
     public render() {
         const { avatarMenuAnchor } = this.state;
         const { classes, isDarkTheme } = this.props;
-        const user = this.props.user || {};
+        const user = this.user;
         return (
             <div className={classes.root}>
                 <CssBaseline />
@@ -234,15 +241,14 @@ class AdminComponent extends React.Component<
                                 <NotificationsIcon fontSize='large' />
                             </Badge>
                         </IconButton>
-                        <Tooltip title={user.username || 'Not logged in'}>
+                        <Tooltip title={user.name}>
                             <Avatar
                                 aria-owns={avatarMenuAnchor ? 'avatar-menu' : undefined}
                                 aria-haspopup='true'
+                                src={user.avatar_url}
                                 className={classes.avatar}
                                 onClick={this.handleAvatarClick}
-                                >
-                                {user.username && user.username[0]}
-                            </Avatar>
+                                />
                         </Tooltip>
                         <Menu
                             id='avatar-menu'
@@ -301,10 +307,6 @@ class AdminComponent extends React.Component<
     }
 
     private handleAvatarClick = (e) => {
-        if (!this.props.user) {
-            this.props.push('/login');
-            return;
-        }
         this.setState({ avatarMenuAnchor: e.currentTarget });
     }
 
@@ -330,6 +332,9 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({
     push: (path: string) => {
         dispatch(push(path));
+    },
+    onAuth: () => {
+        dispatch(authActions.auth());
     },
     onLogout: () => {
         dispatch(authActions.logout());

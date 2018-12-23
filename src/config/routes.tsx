@@ -1,6 +1,5 @@
 import HomeComponent from '../app/home/HomeComponent';
 import CallbackComponent from '../app/auth/CallbackComponent';
-import LoginComponent from '../app/auth/LoginComponent';
 import LogoutComponent from '../app/auth/LogoutComponent';
 import AdminComponent from '../app/admin/AdminComponent';
 
@@ -11,15 +10,11 @@ const routes = [
         component: HomeComponent,
     },
     {
-        path: '/login',
-        component: LoginComponent,
-    },
-    {
         path: '/logout',
         component: LogoutComponent,
     },
     {
-        path: '/callback',
+        path: '/auth/callback',
         component: CallbackComponent,
     },
     {

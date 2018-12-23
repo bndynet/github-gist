@@ -7,9 +7,14 @@ import { LocaleType } from '../locales';
 export interface Config {
     clientId?: string;
     clientSecret?: string;
-    oauthBaseURL?: string;
-    resourceBaseURL?: string;
+    authorizationUri?: string;
+    authorizationCallbackUri?: string;
+    accessTokenUri?: string;
+    userUri?: string;
+    logoutUri?: string;
+    scopes?: string[];
     defaultLocale?: LocaleType;
+    resourceBaseUri?: string;
 }
 
 const getConfig = (): Config => {
