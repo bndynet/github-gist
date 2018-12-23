@@ -1,20 +1,15 @@
-import DashboardComponent from './dashboard/DashboardComponent';
-import MarkdownComponent from './markdown/MarkdownComponent';
+import HomeComponent from './home/HomeComponent';
+import GistFormComponent from './gist/GistFormComponent';
 const routes = [
     {
         path: '/admin',
         exact: true,
-        component: DashboardComponent,
+        component: HomeComponent,
     },
     {
-        path: '/admin/dashboard',
+        path: '/admin/gist/new',
         exact: true,
-        component: DashboardComponent,
-    },
-    {
-        path: '/admin/markdown',
-        exact: true,
-        component: MarkdownComponent,
+        component: GistFormComponent,
     },
 ];
 

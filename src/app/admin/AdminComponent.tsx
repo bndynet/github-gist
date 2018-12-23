@@ -211,7 +211,7 @@ class AdminComponent extends React.Component<
                                 variant='h5'
                                 component='h1'
                                 >
-                                ADMIN REACT
+                                GitHub Gists
                             </Typography>
                         </Link>
                         <IconButton
