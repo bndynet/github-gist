@@ -6,3 +6,8 @@ interface Window {
     __APP_CONF__: any;
     __APP_ENV__: string;
 }
+
+declare module '*.svg' {
+    const content: any;
+    export default content;
+}

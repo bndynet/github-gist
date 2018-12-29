@@ -8,8 +8,9 @@ import authActions from './actions';
 
 class CallbackComponent extends React.Component<{
     onAuthSuccess: (token: string) => void;
+    onAuth: () => void;
 }> {
-    private error: string;
+    private error: any;
 
     constructor(props) {
         super(props);
@@ -18,6 +19,9 @@ class CallbackComponent extends React.Component<{
             this.props.onAuthSuccess(service.getTokenFromUrl());
         } else {
             this.error = service.getErrorFromUrl();
+            if (!this.error) {
+                this.error = <p>Invalid request. <a className={'clickable'} onClick={() => location.href = '/'}>Click here to go home.</a></p>;
+            }
         }
     }
 
@@ -34,6 +38,9 @@ class CallbackComponent extends React.Component<{
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({
+    onAuth: () => {
+        dispatch(authActions.auth());
+    },
     onAuthSuccess: (token: string) => {
         dispatch(authActions.authSuccess(token));
     },

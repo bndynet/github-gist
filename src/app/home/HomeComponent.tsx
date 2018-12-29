@@ -2,20 +2,19 @@ import * as React from 'react';
 import * as ReactMarkdown from 'react-markdown';
 import { Dispatch, Action } from 'redux';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { push } from 'connected-react-router';
 
 import { withStyles, Theme, createStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import { Typography } from '@material-ui/core';
-import Tooltip from '@material-ui/core/Tooltip';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import Collapse from '@material-ui/core/Collapse';
 
 import { actions as authActions, getState as getAuthState, UserInfo } from '../auth';
 import homeActions from './actions';
 import globalActions from '../global/actions';
 
-import { FormattedMessage } from 'react-intl';
-import { LocaleType, supportLocales } from '../../locales';
+import { LocaleType } from '../../locales';
+import { GitHubIcon } from '../../ui';
 
 const styles = (theme: Theme) =>
     createStyles({
@@ -35,15 +34,10 @@ const styles = (theme: Theme) =>
             marginLeft: 'auto',
             marginRight: 'auto',
         },
-        fab: {
-            position: 'fixed',
-            right: theme.spacing.unit * 2,
-            bottom: theme.spacing.unit * 2,
-            fontSize: 24,
-            fontWeight: 700,
-            '&.disabled': {
-                color: theme.palette.common.white,
-            },
+        logo: {
+            fill: theme.palette.text.primary,
+            marginRight: theme.spacing.unit * 4,
+            transform: 'scale(1.5)',
         },
         forkMe: {
             position: 'absolute',
@@ -54,13 +48,14 @@ const styles = (theme: Theme) =>
         btn: {
             marginRight: theme.spacing.unit,
             marginBottom: theme.spacing.unit * 4,
+            padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 2}px`,
         },
     });
 
 interface HomeComponentProps {
     classes: any;
     readme: string;
-    onLogin(): void;
+    onAuth(): void;
     onLogout(): void;
     onPreLogout(): void;
     onGetReadme(): void;
@@ -69,6 +64,7 @@ interface HomeComponentProps {
 
 interface HomeComponentState {
     logoutDelay?: number;
+    showREADME: boolean;
 }
 
 class HomeComponent extends React.Component<HomeComponentProps, HomeComponentState> {
@@ -77,10 +73,11 @@ class HomeComponent extends React.Component<HomeComponentProps, HomeComponentSta
 
     constructor(props: HomeComponentProps) {
         super(props);
-        this.handleLogin = this.handleLogin.bind(this);
+        this.handleStart = this.handleStart.bind(this);
         this.handleLogout = this.handleLogout.bind(this);
         this.state = {
             logoutDelay: null,
+            showREADME: false,
         };
         this.user = getAuthState().user;
     }
@@ -91,36 +88,10 @@ class HomeComponent extends React.Component<HomeComponentProps, HomeComponentSta
 
     public render() {
         const { classes } = this.props;
-        const btn = this.user ? (
-            <Tooltip title={this.user.name}>
-                <Button
-                    disabled={!!this.state.logoutDelay}
-                    classes={{ root: classes.fab, disabled: 'disabled' }}
-                    onClick={this.handleLogout}
-                    color='secondary'
-                    variant='fab'>
-                    {this.state.logoutDelay && this.state.logoutDelay > 0 ? (
-                        this.state.logoutDelay
-                    ) : (
-                        this.user.name[0]
-                    )}
-                </Button>
-            </Tooltip>
-        ) : (
-            <Tooltip title='Log in'>
-                <Button
-                    classes={{ root: classes.fab, disabled: 'disabled' }}
-                    onClick={this.handleLogin}
-                    color='primary'
-                    variant='fab'>
-                    <AccountCircleIcon />
-                </Button>
-            </Tooltip>
-        );
 
         return (
             <div className={classes.body}>
-                <a href='https://github.com/bndynet/admin-template-for-react'>
+                <a href='https://github.com/bndynet/github-gist'>
                     <img
                         className={classes.forkMe}
                         src='https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png'
@@ -128,25 +99,27 @@ class HomeComponent extends React.Component<HomeComponentProps, HomeComponentSta
                     />
                 </a>
                 <main className={classes.main}>
-                    <Link to='/login'>
-                        <Button variant='outlined' className={classes.btn}>
-                            <Typography><FormattedMessage id='login' /></Typography>
-                        </Button>
-                    </Link>
-                    <Link to='/admin'>
-                        <Button variant='outlined' className={classes.btn}>
-                            <Typography><FormattedMessage id='adminPanel' /></Typography>
-                        </Button>
-                    </Link>
-                    {
-                        Object.keys(supportLocales).map((key: string) => (
-                            <Button className={classes.btn} key={key} variant='outlined' onClick={() => this.props.onChangeLocale(key)}>
-                                {supportLocales[key]}
-                            </Button>
-                        ))
-                    }
-                    <ReactMarkdown source={this.props.readme} className={'markdown-body'} />
-                    {btn}
+                    <Typography variant='h3' component='h1'>
+                        <GitHubIcon classNames={classes.logo} />
+                        GitHub Gist
+                    </Typography>
+                    <br /><br />
+                    <Typography variant='body1' component='p'>
+                        The gist management platform for your GitHub which is based on admin-template-for-react project.
+                        Here you can manage your gists on GitHub and create, update and remove them.
+                        Important is that easy to write your gists with Markdown language because of the integrated Markdown Editor.
+                    </Typography>
+                    <br /><br />
+                    <Button variant='contained' color='primary' className={classes.btn} onClick={this.handleStart}>
+                        Start Your Gist
+                    </Button>
+                    <Button color='primary' className={classes.btn} onClick={() => this.setState({showREADME: !this.state.showREADME})}>
+                        Project README.md
+                    </Button>
+                    <Collapse in={!!this.state.showREADME} timeout='auto'>
+                        <hr />
+                        <ReactMarkdown source={this.props.readme} className={'markdown-body'} />
+                    </Collapse>
                 </main>
             </div>
         );
@@ -170,8 +143,12 @@ class HomeComponent extends React.Component<HomeComponentProps, HomeComponentSta
         }, 1000);
     }
 
-    private handleLogin() {
-        this.props.onLogin();
+    private handleStart() {
+        if (!this.user) {
+            this.props.onAuth();
+        } else {
+            push('/admin');
+        }
     }
 
 }
@@ -181,7 +158,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({
-    onLogin: () => {
+    onAuth: () => {
         dispatch(authActions.auth());
     },
     onLogout: () => {
