@@ -1,5 +1,5 @@
 import HomeComponent from './home/HomeComponent';
-import GistFormComponent from './gist/GistFormComponent';
+import { GistFormComponent, GistListComponent } from './gist';
 const routes = [
     {
         path: '/admin',
@@ -10,6 +10,11 @@ const routes = [
         path: '/admin/gist/new',
         exact: true,
         component: GistFormComponent,
+    },
+    {
+        path: '/admin/gist/list',
+        exact: true,
+        component: GistListComponent,
     },
 ];
 

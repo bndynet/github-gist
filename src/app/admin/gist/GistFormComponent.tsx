@@ -1,9 +1,12 @@
 import * as React from 'react';
 import classNames from 'classnames';
 import * as ReactMarkdown from 'react-markdown';
-import { Grid, Theme, createStyles, withStyles, TextField, FormControlLabel, Switch } from '@material-ui/core';
+import { Grid, Theme, createStyles, withStyles, TextField, FormControlLabel, Switch, Button } from '@material-ui/core';
 
 import { ContentHeader } from '../../../ui';
+import { Dispatch, Action } from 'redux';
+import { connect } from 'react-redux';
+import { adminGistActions } from '.';
 
 const styles = (theme: Theme) =>
     createStyles({
@@ -31,14 +34,16 @@ const styles = (theme: Theme) =>
 class GistFormComponent extends React.Component<
     {
         classes: any;
+        onCreateGist: (title: string, content: string, isPrivate: boolean) => void;
     },
-    { viewMode: boolean, gistTitle: string, gistContent: string}
+    { viewMode: boolean, gistTitle: string, gistContent: string, isPrivate: boolean }
 > {
     constructor(props) {
         super(props);
         this.state = {
             viewMode: true,
             gistTitle: '',
+            isPrivate: false,
             gistContent: `# Hi, I am Markdown.
 - one
 - two
@@ -51,6 +56,7 @@ Code block
         };
         this.changeContent = this.changeContent.bind(this);
         this.changeViewMode = this.changeViewMode.bind(this);
+        this.submit = this.submit.bind(this);
     }
 
     public render() {
@@ -89,6 +95,7 @@ Code block
                         </Grid>
                     )}
                 </Grid>
+                <Button onClick={this.submit}>Submit</Button>
             </div>
         );
     }
@@ -100,6 +107,19 @@ Code block
     private changeViewMode() {
         this.setState({ viewMode: !this.state.viewMode });
     }
+
+    private submit() {
+        this.props.onCreateGist(this.state.gistTitle, this.state.gistContent, this.state.isPrivate);
+    }
 }
 
-export default withStyles(styles)(GistFormComponent);
+
+const mapStateToProps = (state) => ({
+});
+
+const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({
+    onCreateGist: (title, content, isPrivate) => dispatch(adminGistActions.createGist(title, content, isPrivate)),
+});
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(GistFormComponent));
