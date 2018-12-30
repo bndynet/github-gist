@@ -9,6 +9,9 @@ import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import { Alert, ContentHeader, Panel, MiniCard, Tag } from '../../../ui';
 import SimpleLineChart from './SimpleLineChart';
 import FormatterPanel from './FormaterPanel';
+import { User } from '../../../helpers/github';
+import { connect } from 'react-redux';
+import { Dispatch, Action } from 'redux';
 
 const styles = (theme: Theme) =>
     createStyles({
@@ -36,20 +39,6 @@ const styles = (theme: Theme) =>
         },
         chartContainer: {},
     });
-
-const renderCard = (props) => {
-    return (
-        <Grid item={true} md={3} xs={6}>
-            <MiniCard
-                title='150'
-                description='New Orders'
-                {...props}
-                links={[ [ 'Home', '/' ], [ 'More info', '/admin/dashboard' ] ]}
-                icon={<ShoppingCartIcon />}
-            />
-        </Grid>
-    );
-};
 
 const renderAlert = (props) => {
     /* tslint:disable */
@@ -87,6 +76,7 @@ const renderPanel = (props) => {
 class DashboardComponent extends React.Component<
     {
         classes: any;
+        user: User;
     },
     {}
 > {
@@ -102,10 +92,42 @@ class DashboardComponent extends React.Component<
                     }}
                 />
                 <Grid container={true} spacing={16 as GridSpacing}>
-                    {renderCard({ variant: 'info' })}
-                    {renderCard({ variant: 'success' })}
-                    {renderCard({ variant: 'warning' })}
-                    {renderCard({})}
+                    <Grid item={true} md={3} xs={6}>
+                        <MiniCard
+                            title={this.props.user.public_gists}
+                            description='Public Gists'
+                            links={[[ 'More info', '/admin/gist/list' ]]}
+                            variant='info'
+                            icon={<ShoppingCartIcon />}
+                        />
+                    </Grid>
+                    <Grid item={true} md={3} xs={6}>
+                        <MiniCard
+                            title={this.props.user.public_repos}
+                            description='Public Repos'
+                            links={[[ 'More info', `https://github.com/${this.props.user.login}?tab=repositories` ]]}
+                            variant='success'
+                            icon={<ShoppingCartIcon />}
+                        />
+                    </Grid>
+                    <Grid item={true} md={3} xs={6}>
+                        <MiniCard
+                            title={this.props.user.followers}
+                            description='Followers'
+                            links={[[ 'More info', `https://github.com/${this.props.user.login}?tab=followers`]]}
+                            variant='warning'
+                            icon={<ShoppingCartIcon />}
+                        />
+                    </Grid>
+                    <Grid item={true} md={3} xs={6}>
+                        <MiniCard
+                            title={this.props.user.following}
+                            description='Following'
+                            links={[[ 'More info', `https://github.com/${this.props.user.login}?tab=following`]]}
+                            variant='error'
+                            icon={<ShoppingCartIcon />}
+                        />
+                    </Grid>
                 </Grid>
 
                 <ContentHeader title='Chart' />
@@ -146,4 +168,11 @@ class DashboardComponent extends React.Component<
     }
 }
 
-export default withStyles(styles)(DashboardComponent);
+const mapStateToProps = (state) => ({
+    user: state.auth.user,
+});
+
+const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(DashboardComponent));

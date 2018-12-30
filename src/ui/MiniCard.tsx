@@ -1,13 +1,7 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
-import {
-    Paper,
-    Theme,
-    createStyles,
-    withStyles,
-    Typography,
-} from '@material-ui/core';
+import { Paper, Theme, createStyles, withStyles, Typography } from '@material-ui/core';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 import { variantColor } from '../theme';
 
@@ -22,7 +16,8 @@ const miniCardStyles = (theme: Theme) =>
             },
         },
         body: {
-            padding: `${theme.spacing.unit}px ${theme.spacing.unit * 1.5}px ${theme.spacing.unit * 2}px ${theme.spacing.unit * 1.5}px`,
+            padding: `${theme.spacing.unit}px ${theme.spacing.unit * 1.5}px ${theme.spacing.unit * 2}px ${theme.spacing
+                .unit * 1.5}px`,
         },
         icon: {
             position: 'absolute',
@@ -75,19 +70,7 @@ class MiniCard extends React.Component<
         const linkEls = [];
         if (links) {
             for (const [ key, value ] of links) {
-                linkEls.push(
-                    value ? (
-                        <Link color='default' key={key} to={value}>
-                            <Typography color='inherit' variant='caption'>
-                                {key}
-                            </Typography>
-                        </Link>
-                    ) : (
-                        <Typography color='inherit' variant='caption' key={key}>
-                            {key}
-                        </Typography>
-                    ),
-                );
+                linkEls.push(this.getLink(key, value));
             }
         }
         return (
@@ -106,6 +89,32 @@ class MiniCard extends React.Component<
                 </Typography>
             </Paper>
         );
+    }
+
+    private getLink(text: string, url: string): JSX.Element {
+        if (url) {
+            if (url.indexOf('://') > 0) {
+                return (
+                    <Typography key={text} color='inherit' variant='caption'>
+                        <a href={url} target='_blank'> {text} </a>
+                    </Typography>
+                );
+            } else {
+                return (
+                    <Link color='default' key={text} to={url}>
+                        <Typography color='inherit' variant='caption'>
+                            {text}
+                        </Typography>
+                    </Link>
+                );
+            }
+        } else {
+            return (
+                <Typography color='inherit' variant='caption' key={text}>
+                    {text}
+                </Typography>
+            );
+        }
     }
 }
 
