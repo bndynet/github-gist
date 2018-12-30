@@ -6,7 +6,7 @@ import { Grid, Theme, createStyles, withStyles, TextField, FormControlLabel, Swi
 import { ContentHeader } from '../../../ui';
 import { Dispatch, Action } from 'redux';
 import { connect } from 'react-redux';
-import { adminGistActions } from '.';
+import { adminGistActions, getState } from '.';
 
 const styles = (theme: Theme) =>
     createStyles({
@@ -35,16 +35,20 @@ class GistFormComponent extends React.Component<
     {
         classes: any;
         onCreateGist: (title: string, content: string, isPrivate: boolean) => void;
+        onUpdateGist: (id, title, content, isPrivate) => void;
+        onGetGistDetail: (id: string) => void;
     },
-    { viewMode: boolean, gistTitle: string, gistContent: string, isPrivate: boolean }
+    { viewMode: boolean, gistId: string, gistTitle: string, gistContent: string, isPrivate: boolean }
 > {
     constructor(props) {
         super(props);
+        const currentGist = getState().currentGist;
         this.state = {
             viewMode: true,
-            gistTitle: '',
-            isPrivate: false,
-            gistContent: `# Hi, I am Markdown.
+            gistId: currentGist.id,
+            gistTitle: currentGist.description,
+            isPrivate: !currentGist.public,
+            gistContent: (currentGist.files && currentGist.files[Object.keys(currentGist.files)[0]].content) || `# Hi, I am Markdown.
 - one
 - two
 - ...
@@ -57,6 +61,12 @@ Code block
         this.changeContent = this.changeContent.bind(this);
         this.changeViewMode = this.changeViewMode.bind(this);
         this.submit = this.submit.bind(this);
+    }
+
+    public componentDidMount() {
+        if (this.state.gistId) {
+            this.props.onGetGistDetail(this.state.gistId);
+        }
     }
 
     public render() {
@@ -109,7 +119,11 @@ Code block
     }
 
     private submit() {
-        this.props.onCreateGist(this.state.gistTitle, this.state.gistContent, this.state.isPrivate);
+        if (this.state.gistId) {
+            this.props.onUpdateGist(this.state.gistId, this.state.gistTitle, this.state.gistContent, this.state.isPrivate);
+        } else {
+            this.props.onCreateGist(this.state.gistTitle, this.state.gistContent, this.state.isPrivate);
+        }
     }
 }
 
@@ -119,6 +133,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({
     onCreateGist: (title, content, isPrivate) => dispatch(adminGistActions.createGist(title, content, isPrivate)),
+    onUpdateGist: (id, title, content, isPrivate) => dispatch(adminGistActions.updateGist(id, title, content, isPrivate)),
+    onGetGistDetail: (id: string) => dispatch(adminGistActions.getGistDetail(id)),
 });
 
 

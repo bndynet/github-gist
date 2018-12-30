@@ -16,6 +16,11 @@ const routes = [
         exact: true,
         component: GistListComponent,
     },
+    {
+        path: '/admin/gist/edit/:id',
+        exact: true,
+        component: GistFormComponent,
+    },
 ];
 
 export default routes;

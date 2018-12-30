@@ -1,7 +1,8 @@
-import { ACTION_LIST_GISTS_SUCCESS, ACTION_GIST_CREATE_SUCCESS } from './actions';
+import { ACTION_LIST_GISTS_SUCCESS, ACTION_GIST_CREATE_SUCCESS, ACTION_GIST_EDIT, ACTION_GIST_GET_DETAIL_SUCCESS } from './actions';
 import { AdminGistState } from '.';
+import { Gist } from '../../../helpers/github';
 
-export default function adminGist(state: AdminGistState = {gists: []}, action): AdminGistState {
+export default function adminGist(state: AdminGistState = {gists: [], currentGist: null}, action): AdminGistState {
     switch (action.type) {
         case ACTION_LIST_GISTS_SUCCESS:
             return {
@@ -17,6 +18,17 @@ export default function adminGist(state: AdminGistState = {gists: []}, action): 
                 gists,
             };
 
+        case ACTION_GIST_EDIT:
+            return {
+                ...state,
+                currentGist: action.payload as Gist,
+            };
+
+        case ACTION_GIST_GET_DETAIL_SUCCESS:
+            return {
+                ...state,
+                currentGist: action.payload as Gist,
+            };
 
         default:
             return state;
