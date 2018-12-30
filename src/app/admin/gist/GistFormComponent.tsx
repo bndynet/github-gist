@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 import { Dispatch, Action } from 'redux';
 import * as ReactMarkdown from 'react-markdown';
 import classNames from 'classnames';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Grid, Theme, createStyles, withStyles, TextField, FormControlLabel, Switch, Button } from '@material-ui/core';
-import SaveIcon from '@material-ui/icons/Save';
 
 import { ContentHeader } from '../../../ui';
 import { adminGistActions, getState } from '.';
@@ -124,7 +124,7 @@ class GistFormComponent extends React.Component<
                 </Grid>
                 <div className='p-right-bottom'>
                     <Button variant='fab' color='secondary' onClick={this.submit}>
-                        <SaveIcon />
+                        <FontAwesomeIcon icon={['far', 'save']} size='2x' />
                     </Button>
                 </div>
             </div>

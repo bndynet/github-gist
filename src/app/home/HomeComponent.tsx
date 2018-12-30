@@ -14,7 +14,8 @@ import homeActions from './actions';
 import globalActions from '../global/actions';
 
 import { LocaleType } from '../../locales';
-import { GitHubIcon } from '../../ui';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const styles = (theme: Theme) =>
     createStyles({
@@ -35,9 +36,7 @@ const styles = (theme: Theme) =>
             marginRight: 'auto',
         },
         logo: {
-            fill: theme.palette.text.primary,
-            marginRight: theme.spacing.unit * 4,
-            transform: 'scale(1.5)',
+            marginRight: theme.spacing.unit,
         },
         forkMe: {
             position: 'absolute',
@@ -100,7 +99,7 @@ class HomeComponent extends React.Component<HomeComponentProps, HomeComponentSta
                 </a>
                 <main className={classes.main}>
                     <Typography variant='h3' component='h1'>
-                        <GitHubIcon classNames={classes.logo} />
+                        <FontAwesomeIcon className={classes.logo} icon={['fab', 'github']} />
                         GitHub Gist
                     </Typography>
                     <br /><br />

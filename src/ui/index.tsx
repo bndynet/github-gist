@@ -9,4 +9,3 @@ export { default as Panel } from './Panel';
 export { default as Tag } from './Tag';
 export { default as Formatter } from './Formatter';
 export { default as RawHtml } from './RawHtml';
-export { default as GitHubIcon } from './GitHubIcon';

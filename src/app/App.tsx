@@ -16,6 +16,12 @@ import { messages, defaultLocale } from '../locales';
 import { KEY_LOCALE, KEY_THEME } from './global';
 import storage from '../storage';
 
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faGithub } from '@fortawesome/free-brands-svg-icons';
+import { faEdit, faSave } from '@fortawesome/free-regular-svg-icons';
+
+library.add(faGithub, faEdit, faSave);
+
 const styles = (theme: Theme) => {
     return createStyles({
         '@global': {
