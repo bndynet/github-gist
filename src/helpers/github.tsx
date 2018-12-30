@@ -69,7 +69,9 @@ export interface Gist {
     truncated?: boolean;
 }
 
-export type GistFiles = {[key: string]: {filename: string, type: string, language: string, raw_url: string, size: number, truncated: boolean, content: string}};
+export interface GistFiles {
+    [key: string]: {filename: string, type: string, language: string, raw_url: string, size: number, truncated: boolean, content: string};
+}
 
 export interface User {
     avatar_url?: string;

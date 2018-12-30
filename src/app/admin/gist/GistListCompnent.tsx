@@ -54,7 +54,7 @@ class GistListComponent extends React.Component<
                                             <EditIcon />
                                         </IconButton>,
                                     ]}>
-                                    {gist.description}
+                                    Updated on {gist.updated_at}
                                 </Panel>
                             </Grid>
                         ))}

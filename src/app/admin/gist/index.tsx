@@ -9,7 +9,7 @@ export { default as adminGistState } from './reducer';
 
 export interface AdminGistState {
     gists: Gist[];
-    currentGist: Gist,
+    currentGist: Gist;
 }
 
 export const getState = (): AdminGistState => (store && store.getState().adminGistState) || {};

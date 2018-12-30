@@ -51,9 +51,10 @@ const actions = {
         payload: gist,
     }),
 
-    getGistDetail: (id: string) => ({
+    getGistDetail: (id: string, resolve?: () => void) => ({
         type: ACTION_GIST_GET_DETAIL_REQUEST,
         payload: id,
+        resolve,
     }),
     getGistDetailSuccess: (gist: Gist) => ({
         type: ACTION_GIST_GET_DETAIL_SUCCESS,

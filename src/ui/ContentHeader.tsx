@@ -8,9 +8,9 @@ const styles = (theme: Theme) =>
     createStyles({
         contentHeader: {
             display: 'flex',
-            paddingTop: theme.spacing.unit * 2,
+            paddingTop: theme.spacing.unit * 3,
             paddingBottom: theme.spacing.unit,
-            marginBottom: theme.spacing.unit * 2,
+            marginBottom: theme.spacing.unit,
             '& h2': {
                 flex: 1,
             },

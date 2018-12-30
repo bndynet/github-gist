@@ -53,6 +53,9 @@ function* getGistDetail(action) {
         const gh = yield call(() => new GitHub({accessToken: getAuthState().accessToken}));
         const gist = yield call(gh.getGistDetail, action.payload);
         yield put(actions.getGistDetailSuccess(gist));
+        if (action.resolve) {
+            yield call(action.resolve);
+        }
         yield put(globalActions.hideLoading());
     } catch (e) {
         yield put(globalActions.hideLoading());

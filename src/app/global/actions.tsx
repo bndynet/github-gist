@@ -44,7 +44,7 @@ export const global = (state = { loading: false }, action) => {
     }
 };
 
-const globalActions = {
+export const globalActions = {
     showLoading: (text?: string) => ({
         type: ACTION_LOADING_SHOW,
         payload: {
