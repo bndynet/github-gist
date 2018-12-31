@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { Grid, Theme, createStyles, withStyles, TextField, IconButton } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 
-import { ContentHeader, Panel } from '../../../ui';
+import { PageHeader, Panel } from '../../../ui';
 import { Gist } from '../../../helpers/github';
 import { GridSpacing } from '@material-ui/core/Grid';
 import { Dispatch, Action } from 'redux';
@@ -38,7 +38,7 @@ class GistListComponent extends React.Component<
         const { classes } = this.props;
         return (
             <div>
-                <ContentHeader title='Gists' />
+                <PageHeader title='Gists' />
                 <Grid container={true} spacing={16 as GridSpacing}>
                     {this.props.gists &&
                         this.props.gists.length > 0 &&

@@ -15,6 +15,7 @@ export default function adminGist(state: AdminGistState = {gists: [], currentGis
             gists.push(action.payload);
             return {
                 ...state,
+                currentGist: action.payload,
                 gists,
             };
 

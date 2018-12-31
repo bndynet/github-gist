@@ -25,11 +25,12 @@ const actions = {
         payload: gists,
     }),
 
-    createGist: (title: string, content: string, isPrivate: boolean) => ({
+    createGist: (title: string, content: string, isPrivate: boolean, resolve: () => void) => ({
         type: ACTION_GIST_CREATE_REQUEST,
         payload: {
             title, content, isPrivate,
         },
+        resolve,
     }),
     createGistSuccess: (gist: Gist) => ({
         type: ACTION_GIST_CREATE_SUCCESS,
@@ -40,11 +41,12 @@ const actions = {
         type: ACTION_GIST_EDIT,
         payload: gist,
     }),
-    updateGist: (id: string, title: string, content: string, isPrivate: boolean) => ({
+    updateGist: (id: string, title: string, content: string, isPrivate: boolean, resolve: () => void) => ({
         type: ACTION_GIST_UPDATE_REQUEST,
         payload: {
             id, title, content, isPrivate,
         },
+        resolve,
     }),
     updateGistSuccess: (gist: Gist) => ({
         type: ACTION_GIST_EDIT,

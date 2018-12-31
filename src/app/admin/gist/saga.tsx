@@ -25,9 +25,14 @@ function* createGist(action) {
             { 'default.md': {content: action.payload.content} },
             action.payload.isPrivate);
         yield put(actions.createGistSuccess(gist));
+        if (action.resolve) {
+            yield call(action.resolve);
+        }
         yield put(globalActions.hideLoading());
+        yield put(globalActions.notifySuccess('Your gist has been created successfully.'));
     } catch (e) {
         yield put(globalActions.hideLoading());
+        yield put(globalActions.notifyError('Failed to create your gist!'));
     }
 }
 
@@ -41,9 +46,14 @@ function* updateGist(action) {
             { 'default.md': {content: action.payload.content} },
             action.payload.isPrivate);
         yield put(actions.updateGistSuccess(gist));
+        if (action.resolve) {
+            yield call(action.resolve);
+        }
         yield put(globalActions.hideLoading());
+        yield put(globalActions.notifySuccess('Your gist has been updated successfully.'));
     } catch (e) {
         yield put(globalActions.hideLoading());
+        yield put(globalActions.notifyError('Failed to update your gist!'));
     }
 }
 
