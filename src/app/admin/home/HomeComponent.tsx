@@ -1,20 +1,21 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
+import { Dispatch, Action } from 'redux';
 
+import * as randomcolor from 'randomcolor';
 import Typography from '@material-ui/core/Typography';
 import { GridSpacing } from '@material-ui/core/Grid';
-import { Theme, createStyles, withStyles, Grid, IconButton, Tooltip } from '@material-ui/core';
-import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import { Theme, createStyles, withStyles, Grid } from '@material-ui/core';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ResponsiveContainer, LineChart, XAxis, YAxis, CartesianGrid, Legend, Line, Tooltip } from 'recharts';
 import _groupBy from 'lodash-es/groupBy';
 import _countBy from 'lodash-es/countBy';
 import _filter from 'lodash-es/filter';
+import _reverse from 'lodash-es/reverse';
 
 import { PageHeader, MiniCard } from '../../../ui';
 import { User } from '../../../helpers/github';
-import { connect } from 'react-redux';
-import { Dispatch, Action } from 'redux';
 import { getState as getGithubState, Activity } from '../../_service/github';
-import { ResponsiveContainer, LineChart, XAxis, YAxis, CartesianGrid, Legend, Line } from 'recharts';
-import * as randomcolor from 'randomcolor';
 
 const styles = (theme: Theme) =>
     createStyles({
@@ -56,7 +57,7 @@ class DashboardComponent extends React.Component<
         const { classes } = this.props;
         const repos = [];
         const chartData: Array<{name: string}> = [];
-        const activities = _filter(this.props.activities, (activity: Activity) => activity.repo.name.startsWith(this.props.user.login));
+        const activities = _reverse(_filter(this.props.activities, (activity: Activity) => activity.repo.name.startsWith(this.props.user.login)));
         const groups = _groupBy(activities, (activity: Activity) => {
             return activity.created_at.split('T')[0];
         });
@@ -93,7 +94,7 @@ class DashboardComponent extends React.Component<
                             description='Public Gists'
                             links={[[ 'More info', '/admin/gist/list' ]]}
                             variant='info'
-                            icon={<ShoppingCartIcon />}
+                            icon={<FontAwesomeIcon icon={['fab', 'github']} />}
                         />
                     </Grid>
                     <Grid item={true} md={3} xs={6}>
@@ -102,7 +103,7 @@ class DashboardComponent extends React.Component<
                             description='Public Repos'
                             links={[[ 'More info', `https://github.com/${this.props.user.login}?tab=repositories` ]]}
                             variant='success'
-                            icon={<ShoppingCartIcon />}
+                            icon={<FontAwesomeIcon icon={['fab', 'github']} />}
                         />
                     </Grid>
                     <Grid item={true} md={3} xs={6}>
@@ -111,7 +112,7 @@ class DashboardComponent extends React.Component<
                             description='Followers'
                             links={[[ 'More info', `https://github.com/${this.props.user.login}?tab=followers`]]}
                             variant='warning'
-                            icon={<ShoppingCartIcon />}
+                            icon={<FontAwesomeIcon icon={['fab', 'github']} />}
                         />
                     </Grid>
                     <Grid item={true} md={3} xs={6}>
@@ -120,7 +121,7 @@ class DashboardComponent extends React.Component<
                             description='Following'
                             links={[[ 'More info', `https://github.com/${this.props.user.login}?tab=following`]]}
                             variant='error'
-                            icon={<ShoppingCartIcon />}
+                            icon={<FontAwesomeIcon icon={['fab', 'github']} />}
                         />
                     </Grid>
                 </Grid>
@@ -130,9 +131,10 @@ class DashboardComponent extends React.Component<
                     <ResponsiveContainer width='99%' height={320}>
                         <LineChart data={chartData}>
                             <XAxis dataKey='name' />
-                            <YAxis />
+                            <YAxis width={20} />
                             <CartesianGrid vertical={false} strokeDasharray='3 3' />
                             <Legend />
+                            <Tooltip />
                             {repos && repos.map((repo) => (
                                 <Line key={repo} type='monotone' legendType='circle' dataKey={repo} connectNulls={true} stroke={randomcolor()} activeDot={{ r: 8 }} />
                             ))}
