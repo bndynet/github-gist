@@ -9,12 +9,15 @@ import { home } from '../app/home/reducers';
 import { global } from '../app/global/actions';
 import { adminGistState } from '../app/admin/gist';
 
+import { reducer as github } from '../app/_service/github';
+
 const createRootReducer = (his: History) => (combineReducers({
     router: connectRouter(his),
     global,
     auth,
     home,
     adminGistState,
+    github,
 }));
 
 const rootReducer = createRootReducer(history);

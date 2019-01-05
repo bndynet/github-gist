@@ -43,17 +43,7 @@ export class GitHub {
         });
     }
 
-    // public listNotifications() {
-    //     return this.user.listNotifications();
-    // }
-
-    // public listRepos() {
-    //     return this.user.listRepos();
-    // }
-
-    // public listStarredRepos() {
-    //     return this.user.listStarredRepos();
-    // }
+    public getNotifications = () => this.ajax.get('/notifications');
 }
 
 export interface Gist {
@@ -112,6 +102,15 @@ export interface User {
     type: string;
     updated_at: string;
     url: string;
+}
+
+export interface Notification {
+    id?: string;
+    subject?: {
+        title?: string;
+        type?: string;
+        url?: string;
+    };
 }
 
 export interface ResponseError {

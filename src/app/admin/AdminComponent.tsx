@@ -28,6 +28,8 @@ import { actions as authActions, getState as getAuthState, UserInfo } from '../a
 import { themeConfig } from '../../theme';
 import routes from './routes';
 import globalActions from '../global/actions';
+import { actions as githubActions, getState as getGithubState } from '../_service/github';
+import { Notification } from '../../helpers/github';
 
 const styles = (theme: Theme) =>
     createStyles({
@@ -178,10 +180,12 @@ class AdminComponent extends React.Component<
         history: any;
         isDarkTheme: boolean;
         width: Breakpoint;
+        notifications: Notification[];
         push: (path: string) => void;
         onAuth: () => void;
         onLogout: () => void;
         onThemeChange: (toDark: boolean) => void;
+        onGetNotifications: () => void;
     },
     { largeMainMenu: boolean; avatarMenuAnchor: any }
 > {
@@ -198,6 +202,12 @@ class AdminComponent extends React.Component<
         if (!this.user) {
             this.props.onAuth();
         }
+    }
+
+    public componentDidMount() {
+        setInterval(() => {
+            this.props.onGetNotifications();
+        }, 1000 * 60 * 1);
     }
 
     public render() {
@@ -237,7 +247,7 @@ class AdminComponent extends React.Component<
                             </IconButton>
                         </Tooltip>
                         <IconButton color='inherit'>
-                            <Badge badgeContent={4} color='secondary' classes={{ badge: classes.badge }}>
+                            <Badge badgeContent={this.props.notifications ? this.props.notifications.length : 0} color='secondary' classes={{ badge: classes.badge }}>
                                 <NotificationsIcon fontSize='large' />
                             </Badge>
                         </IconButton>
@@ -326,6 +336,7 @@ class AdminComponent extends React.Component<
 
 const mapStateToProps = (state) => ({
     user: state.auth.user,
+    notifications: getGithubState().notifications,
     isDarkTheme: state.global.theme && state.global.theme.palette && state.global.theme.palette.type === 'dark',
 });
 
@@ -335,6 +346,9 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({
     },
     onAuth: () => {
         dispatch(authActions.auth());
+    },
+    onGetNotifications: () => {
+        dispatch(githubActions.notificationRequest());
     },
     onLogout: () => {
         dispatch(authActions.logout());
