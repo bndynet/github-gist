@@ -44,6 +44,8 @@ export class GitHub {
     }
 
     public getNotifications = () => this.ajax.get('/notifications');
+
+    public getActivities = (username: string, pagesize: number, page: number) => this.ajax.get(`/users/${username}/events?per_page=${pagesize}&page=${page}`);
 }
 
 export interface Gist {

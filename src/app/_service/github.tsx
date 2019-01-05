@@ -41,7 +41,7 @@ export const actions = {
     }),
     activitySuccess: (activities: Activity[]) => ({
         type: ACTION_ACTIVITY_SUCCESS,
-        activities,
+        payload: activities,
     }),
     activityFailure: () => ({
         type: ACTION_ACTIVITY_FAILURE,
@@ -59,7 +59,6 @@ export const reducer = (state: State, action) => {
 
         case ACTION_ACTIVITY_SUCCESS:
             return {...state, activities: action.payload};
-        
         default:
             return {...state};
     }
@@ -79,7 +78,7 @@ function* getNotifications() {
 function* getActivities() {
     try {
         const gh = yield call(() => new GitHub({accessToken: getAuthState().accessToken}));
-        const activities = yield call(gh.getActivities);
+        const activities = yield call(gh.getActivities, getAuthState().user.login, 100, 1);
         yield put(actions.activitySuccess(activities));
     } catch (e) {
         yield put(actions.activityFailure());

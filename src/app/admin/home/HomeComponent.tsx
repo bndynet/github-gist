@@ -3,19 +3,18 @@ import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
 import { GridSpacing } from '@material-ui/core/Grid';
 import { Theme, createStyles, withStyles, Grid, IconButton, Tooltip } from '@material-ui/core';
-import HelpIcon from '@material-ui/icons/Help';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import _groupBy from 'lodash-es/groupBy';
 import _countBy from 'lodash-es/countBy';
+import _filter from 'lodash-es/filter';
 
-import { Alert, PageHeader, Panel, MiniCard, Tag } from '../../../ui';
-import SimpleLineChart from './SimpleLineChart';
-import FormatterPanel from './FormaterPanel';
+import { PageHeader, MiniCard } from '../../../ui';
 import { User } from '../../../helpers/github';
 import { connect } from 'react-redux';
 import { Dispatch, Action } from 'redux';
 import { getState as getGithubState, Activity } from '../../_service/github';
 import { ResponsiveContainer, LineChart, XAxis, YAxis, CartesianGrid, Legend, Line } from 'recharts';
+import * as randomcolor from 'randomcolor';
 
 const styles = (theme: Theme) =>
     createStyles({
@@ -54,18 +53,26 @@ class DashboardComponent extends React.Component<
 > {
 
     public render() {
-        const { classes, activities } = this.props;
+        const { classes } = this.props;
         const repos = [];
-        const chartData: {name: string}[] = [];
+        const chartData: Array<{name: string}> = [];
+        const activities = _filter(this.props.activities, (activity: Activity) => activity.repo.name.startsWith(this.props.user.login));
         const groups = _groupBy(activities, (activity: Activity) => {
             return activity.created_at.split('T')[0];
         });
         Object.keys(groups).forEach((key) => {
-            const counts = _countBy(groups[key], 'repo.name');
+            const counts = _countBy(groups[key], (activity: Activity) => activity.repo.name.split('/')[1]);
             chartData.push({name: key, ...counts});
             Object.keys(counts).forEach((repo) => {
                 if (repos.indexOf(repo) < 0) {
                     repos.push(repo);
+                }
+            });
+        });
+        chartData.forEach((item) => {
+            repos.forEach((repo) => {
+                if (!item[repo]) {
+                    item[repo] = 0;
                 }
             });
         });
@@ -127,7 +134,7 @@ class DashboardComponent extends React.Component<
                             <CartesianGrid vertical={false} strokeDasharray='3 3' />
                             <Legend />
                             {repos && repos.map((repo) => (
-                                <Line type='monotone' dataKey={repo} activeDot={{ r: 8 }} />
+                                <Line key={repo} type='monotone' legendType='circle' dataKey={repo} connectNulls={true} stroke={randomcolor()} activeDot={{ r: 8 }} />
                             ))}
                         </LineChart>
                     </ResponsiveContainer>

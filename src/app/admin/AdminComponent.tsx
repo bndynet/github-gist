@@ -186,6 +186,7 @@ class AdminComponent extends React.Component<
         onLogout: () => void;
         onThemeChange: (toDark: boolean) => void;
         onGetNotifications: () => void;
+        onGetActivities: () => void;
     },
     { largeMainMenu: boolean; avatarMenuAnchor: any }
 > {
@@ -205,6 +206,7 @@ class AdminComponent extends React.Component<
     }
 
     public componentDidMount() {
+        this.props.onGetActivities();
         setInterval(() => {
             this.props.onGetNotifications();
         }, 1000 * 60 * 1);
@@ -346,6 +348,9 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({
     },
     onAuth: () => {
         dispatch(authActions.auth());
+    },
+    onGetActivities: () => {
+        dispatch(githubActions.activityRequest());
     },
     onGetNotifications: () => {
         dispatch(githubActions.notificationRequest());
