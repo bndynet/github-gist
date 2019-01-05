@@ -2,9 +2,11 @@ import * as React from 'react';
 
 import Typography from '@material-ui/core/Typography';
 import { GridSpacing } from '@material-ui/core/Grid';
-import { Theme, createStyles, withStyles, Grid, IconButton } from '@material-ui/core';
+import { Theme, createStyles, withStyles, Grid, IconButton, Tooltip } from '@material-ui/core';
 import HelpIcon from '@material-ui/icons/Help';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import _groupBy from 'lodash-es/groupBy';
+import _countBy from 'lodash-es/countBy';
 
 import { Alert, PageHeader, Panel, MiniCard, Tag } from '../../../ui';
 import SimpleLineChart from './SimpleLineChart';
@@ -12,6 +14,8 @@ import FormatterPanel from './FormaterPanel';
 import { User } from '../../../helpers/github';
 import { connect } from 'react-redux';
 import { Dispatch, Action } from 'redux';
+import { getState as getGithubState, Activity } from '../../_service/github';
+import { ResponsiveContainer, LineChart, XAxis, YAxis, CartesianGrid, Legend, Line } from 'recharts';
 
 const styles = (theme: Theme) =>
     createStyles({
@@ -40,48 +44,32 @@ const styles = (theme: Theme) =>
         chartContainer: {},
     });
 
-const renderAlert = (props) => {
-    /* tslint:disable */
-    return (
-        <Grid item={true} sm={6}>
-            <Alert
-                title='Alert Title'
-                message='Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.'
-                variant={props.variant}
-                shadow={props.shadow}
-                square={props.square}
-                closeable={props.closeable}
-            />
-        </Grid>
-    );
-};
-
-const renderPanel = (props) => {
-    return (
-        <Grid item={true} sm={6}>
-            <Panel
-                title='Panel Title'
-                variant={props.variant}
-                closeable={props.closeable}
-                minimizeable={props.minimizeable}
-                actions={props.actions}>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur unde suscipit, quam
-                beatae rerum inventore consectetur, neque doloribus, cupiditate numquam dignissimos laborum fugiat
-                deleniti? Eum quasi quidem quibusdam.
-            </Panel>
-        </Grid>
-    );
-};
-
 class DashboardComponent extends React.Component<
     {
         classes: any;
         user: User;
+        activities: Activity[];
     },
     {}
 > {
+
     public render() {
-        const { classes } = this.props;
+        const { classes, activities } = this.props;
+        const repos = [];
+        const chartData: {name: string}[] = [];
+        const groups = _groupBy(activities, (activity: Activity) => {
+            return activity.created_at.split('T')[0];
+        });
+        Object.keys(groups).forEach((key) => {
+            const counts = _countBy(groups[key], 'repo.name');
+            chartData.push({name: key, ...counts});
+            Object.keys(counts).forEach((repo) => {
+                if (repos.indexOf(repo) < 0) {
+                    repos.push(repo);
+                }
+            });
+        });
+
         return (
             <div data-name='top'>
                 <PageHeader
@@ -130,39 +118,20 @@ class DashboardComponent extends React.Component<
                     </Grid>
                 </Grid>
 
-                <PageHeader title='Chart' />
+                <PageHeader title='GitHub Activities' />
                 <Typography component='div' className={classes.chartContainer}>
-                    <SimpleLineChart />
+                    <ResponsiveContainer width='99%' height={320}>
+                        <LineChart data={chartData}>
+                            <XAxis dataKey='name' />
+                            <YAxis />
+                            <CartesianGrid vertical={false} strokeDasharray='3 3' />
+                            <Legend />
+                            {repos && repos.map((repo) => (
+                                <Line type='monotone' dataKey={repo} activeDot={{ r: 8 }} />
+                            ))}
+                        </LineChart>
+                    </ResponsiveContainer>
                 </Typography>
-
-                <PageHeader title='Alerts' />
-                <Grid container={true} spacing={16 as GridSpacing}>
-                    {renderAlert({ variant: 'info', square: true, closeable: false })}
-                    {renderAlert({ variant: 'success', square: true, closeable: false })}
-                    {renderAlert({ variant: 'warning', square: false, closeable: true, shadow: 3 })}
-                    {renderAlert({ variant: 'error', square: false, closeable: true, shadow: 3 })}
-                </Grid>
-
-                <PageHeader title='Panels' />
-                <Grid container={true} spacing={16 as GridSpacing}>
-                    {renderPanel({ variant: 'info' })}
-                    {renderPanel({ variant: 'success' })}
-                    {renderPanel({ variant: 'warning', closeable: true, minimizeable: true })}
-                    {renderPanel({
-                        variant: 'error',
-                        closeable: true,
-                        minimizeable: true,
-                        actions: [
-                            <Tag key='1' variant='error'>8 New Members</Tag>,
-                            <IconButton key='2' onClick={() => alert('Help')}>
-                                <HelpIcon />
-                            </IconButton>,
-                        ],
-                    })}
-                </Grid>
-
-                <PageHeader title='Formatters' />
-                <FormatterPanel />
             </div>
         );
     }
@@ -170,6 +139,7 @@ class DashboardComponent extends React.Component<
 
 const mapStateToProps = (state) => ({
     user: state.auth.user,
+    activities: getGithubState().activities,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({
