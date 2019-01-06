@@ -14,6 +14,7 @@ const styles = (theme: Theme) =>
     createStyles({
         editor: {
             height: 'calc(100vh - 250px)',
+            marginTop: 15,
         },
         preview: {
             height: 'calc(100vh - 250px)',

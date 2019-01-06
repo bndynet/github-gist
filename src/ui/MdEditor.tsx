@@ -39,6 +39,7 @@ const styles = (theme: Theme) =>
             flex: 1,
             borderLeft: `solid 3px ${theme.palette.divider}`,
             padding: theme.spacing.unit,
+            overflow: 'auto',
         },
     });
 
