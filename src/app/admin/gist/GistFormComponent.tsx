@@ -8,7 +8,8 @@ import { Grid, Theme, createStyles, withStyles, TextField, FormControlLabel, Swi
 
 import { PageHeader, MdEditor } from '../../../ui';
 import { adminGistActions, getState } from '.';
-import globalActions from '../../global/actions';
+import { globalActions, KEY_THEME } from '../../global';
+import storage from '../../../storage';
 
 const styles = (theme: Theme) =>
     createStyles({
@@ -34,6 +35,7 @@ class GistFormComponent extends React.Component<
     {
         classes: any;
         match: match<{id: string}>,
+        theme: string;
         onCreateGist: (title: string, content: string, isPrivate: boolean, resolve: () => void) => void;
         onUpdateGist: (id, title, content, isPrivate, resolve: () => void) => void;
         onGetGistDetail: (id: string, resolve: () => void) => void;
@@ -86,6 +88,7 @@ class GistFormComponent extends React.Component<
                 </Grid>
                 <MdEditor
                     className={classes.editor}
+                    theme={this.props.theme}
                     content={this.state.gistContent}
                     onChange={this.changeContent}
                     placeholder='Write your gist...' />
@@ -131,6 +134,7 @@ class GistFormComponent extends React.Component<
 
 
 const mapStateToProps = (state) => ({
+    theme: state.global.theme && state.global.theme.type,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({

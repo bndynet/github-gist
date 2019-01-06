@@ -1,6 +1,7 @@
 import { NotifierOptions } from '../../ui';
 import { LocaleType } from '../../locales';
 import { KEY_LOCALE, KEY_THEME } from '.';
+import { ClientTheme } from '../../theme';
 import storage from '../../storage';
 
 export const ACTION_LOADING_SHOW = 'G_LOADING_SHOW';
@@ -98,7 +99,7 @@ export const globalActions = {
         type: ACTION_NOTIFIER_HIDE,
     }),
 
-    changeTheme: (theme) => ({
+    changeTheme: (theme: ClientTheme) => ({
         type: ACTION_THEME_CHANGE,
         theme,
     }),

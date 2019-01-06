@@ -6,8 +6,11 @@ import { ifTheme } from '../theme';
 import * as CodeMirror from 'codemirror';
 
 import 'codemirror/lib/codemirror.css';
-import 'codemirror/theme/night.css';
+import 'codemirror/theme/material.css';
 import 'codemirror/mode/markdown/markdown.js';
+
+const EDITOR_THEME_DARK = 'material';
+const EDITOR_THEME_LIGHT = 'default';
 
 const styles = (theme: Theme) =>
     createStyles({
@@ -15,13 +18,13 @@ const styles = (theme: Theme) =>
             display: 'flex',
             minHeight: 360,
             border: `solid 1px ${ifTheme(theme, 'rgba(0, 0, 0, 0.23)', 'rgba(255, 255, 255, 0.23)')}`,
-            padding: 2,
+            padding: 1,
             borderRadius: theme.shape.borderRadius,
         },
         rootFocused: {
             borderColor: theme.palette.primary.main,
             borderWidth: 2,
-            padding: 1,
+            padding: 0,
         },
         editor: {
             flex: 1,
@@ -33,6 +36,10 @@ const styles = (theme: Theme) =>
             },
             '& .CodrMirror .CodeMirror-scroll': {
                 borderTopLeftRadius: theme.shape.borderRadius,
+            },
+            '& .CodeMirror-gutters': {
+                borderTopLeftRadius: theme.shape.borderRadius,
+                borderBotttomLeftRadius: theme.shape.borderRadius,
             },
         },
         preview: {
@@ -48,6 +55,7 @@ class MdEditor extends React.Component<{
     className?: string,
     content?: string,
     placeholder?: string,
+    theme?: string | 'light' | 'dark',
     onChange?: (content: string) => void,
     onFocus?: (e) => void,
     onBlur?: (e) => void,
@@ -58,6 +66,7 @@ class MdEditor extends React.Component<{
     private textAreaElement: HTMLTextAreaElement;
     private editor: CodeMirror.EditorFromTextArea;
     private didDefaultValue: boolean;
+    private theme: string;
 
     constructor(props) {
         super(props);
@@ -65,6 +74,7 @@ class MdEditor extends React.Component<{
             content: this.props.content,
             focused: false,
         };
+        this.theme = this.props.theme;
     }
 
     public componentDidUpdate() {
@@ -72,13 +82,43 @@ class MdEditor extends React.Component<{
             this.editor.setValue(this.textAreaElement.defaultValue);
             this.didDefaultValue = true;
         }
+        if (this.props.theme !== this.theme) {
+            this.theme = this.props.theme;
+            this.editor.setOption('theme', this.props.theme === 'dark' ? EDITOR_THEME_DARK : EDITOR_THEME_LIGHT);
+        }
     }
 
     public componentDidMount() {
+      this.initEditor();
+    }
+
+    public render() {
+        const { classes, className, content } = this.props;
+        return (
+            <div className={classNames(classes.root, this.state.focused && classes.rootFocused, className)}>
+                <div className={classes.editor}>
+                    <textarea
+                        defaultValue={this.state.content || content}
+                        ref={(s) => this.textAreaElement = s}
+                    />
+                </div>
+                <div className={classes.preview}>
+                    <ReactMarkdown
+                        className={classNames('markdown-body')}
+                        source={this.state.content || content}
+                    />
+                </div>
+            </div>
+        );
+    }
+
+    private initEditor() {
         this.editor = CodeMirror.fromTextArea(this.textAreaElement, {
             lineNumbers: true,
+            lineWrapping: true,
             mode: 'markdown',
             placeholder: this.props.placeholder,
+            theme: this.props.theme === 'dark' ? EDITOR_THEME_DARK : EDITOR_THEME_LIGHT,
         });
         this.editor.on('change', (editorInstance) => {
             this.setState({
@@ -104,26 +144,6 @@ class MdEditor extends React.Component<{
                 this.props.onBlur(editorInstance);
             }
         });
-    }
-
-    public render() {
-        const { classes, className, content } = this.props;
-        return (
-            <div className={classNames(classes.root, this.state.focused && classes.rootFocused, className)}>
-                <div className={classes.editor}>
-                    <textarea
-                        defaultValue={this.state.content || content}
-                        ref={(s) => this.textAreaElement = s}
-                    />
-                </div>
-                <div className={classes.preview}>
-                    <ReactMarkdown
-                        className={classNames('markdown-body')}
-                        source={this.state.content || content}
-                    />
-                </div>
-            </div>
-        );
     }
 }
 

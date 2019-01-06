@@ -25,7 +25,7 @@ import BrightnessLowIcon from '@material-ui/icons/BrightnessLow';
 
 import AdminMenuComponent from './AdminMenuComponent';
 import { actions as authActions, getState as getAuthState, UserInfo } from '../auth';
-import { themeConfig } from '../../theme';
+import { themeConfig, AppTheme } from '../../theme';
 import routes from './routes';
 import globalActions from '../global/actions';
 import { actions as githubActions, getState as getGithubState } from '../_service/github';
@@ -339,7 +339,7 @@ class AdminComponent extends React.Component<
 const mapStateToProps = (state) => ({
     user: state.auth.user,
     notifications: getGithubState().notifications,
-    isDarkTheme: state.global.theme && state.global.theme.palette && state.global.theme.palette.type === 'dark',
+    isDarkTheme: state.global.theme && state.global.theme.type === 'dark',
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({
@@ -361,9 +361,7 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({
     onThemeChange: (toDark: boolean) => {
         dispatch(
             globalActions.changeTheme({
-                palette: {
-                    type: toDark ? 'dark' : 'light',
-                },
+                type: toDark ? 'dark' : 'light',
             }),
         );
     },

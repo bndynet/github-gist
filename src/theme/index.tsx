@@ -20,6 +20,10 @@ export type AppTheme = Theme & {
     sidebarWidthMini: number;
 };
 
+export interface ClientTheme {
+    type: 'dark' | 'light';
+}
+
 export const ifTheme = (theme: Theme, lightResult: any, darkResult: any): any =>
     theme.palette.type === 'light' ? lightResult : darkResult;
 

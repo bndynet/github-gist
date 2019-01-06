@@ -10,7 +10,7 @@ import { Theme, createStyles, withStyles, LinearProgress } from '@material-ui/co
 
 import globalActions from './global/actions';
 import { routes } from '../config';
-import { themeConfig } from '../theme';
+import { themeConfig, ClientTheme, AppTheme } from '../theme';
 import { Notifier, NotifierOptions, Overlay, Loading } from '../ui';
 import { messages, defaultLocale } from '../locales';
 import { KEY_LOCALE, KEY_THEME } from './global';
@@ -52,11 +52,16 @@ interface AppComponentProps {
     theme: any;
     locale: string;
     onCloseNotifier: () => void;
+    onStart: () => void;
 }
 
 class AppComponent extends React.Component<AppComponentProps> {
     constructor(props) {
         super(props);
+    }
+
+    public componentDidMount() {
+        this.props.onStart();
     }
 
     public render() {
@@ -84,8 +89,13 @@ class AppComponent extends React.Component<AppComponentProps> {
 }
 
 const mapStateToProps = (state) => {
-    const clientTheme = state.global.theme || storage.get(KEY_THEME);
-    const finalTheme = clientTheme ? _merge({}, themeConfig, clientTheme) : themeConfig;
+    const clientTheme: ClientTheme = state.global.theme || storage.get(KEY_THEME);
+    const clientToAppTheme = {
+        palette: {
+            type: clientTheme.type,
+        },
+    };
+    const finalTheme = clientTheme ? _merge({}, themeConfig, clientToAppTheme) : themeConfig;
     const muiFinalTheme = createMuiTheme(finalTheme);
     return {
         loading: state.global.loading,
@@ -100,6 +110,11 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({
     onCloseNotifier: () => dispatch(globalActions.unnotify()),
+    onStart: () => {
+        if (storage.get(KEY_THEME)) {
+            dispatch(globalActions.changeTheme(storage.get(KEY_THEME)));
+        }
+    },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(AppComponent));
