@@ -3,12 +3,9 @@
     "extends": ["tslint:latest", "tslint-react"],
     "rules": {
         "jsx-alignment": false,
-        "jsx-no-lambda": false, // TODO
-        "jsx-no-multiline-js": false, // TODO
-        "quotemark": [
-			true,
-			"single"
-        ],
+        "jsx-no-lambda": false,
+        "jsx-no-multiline-js": false,
+        "quotemark": false,
         "ordered-imports": false,
         "grouped-imports": false,
         "object-literal-sort-keys": false,

@@ -133,7 +133,7 @@ class DashboardComponent extends React.Component<
                             <XAxis dataKey='name' />
                             <YAxis width={20} />
                             <CartesianGrid vertical={false} strokeDasharray='3 3' />
-                            <Legend />
+                            <Legend height={80} />
                             <Tooltip />
                             {repos && repos.map((repo) => (
                                 <Line key={repo} type='monotone' legendType='circle' dataKey={repo} connectNulls={true} stroke={randomcolor()} activeDot={{ r: 8 }} />

@@ -127,7 +127,7 @@ class AdminMenuCompnent extends React.Component<{ classes: any; mini?: boolean }
                     className={classes.listItem}
                     onClick={() => this.handleMenuClick(menu)}
                     component={menu.link ? (props: LinkProps) => <Link {...props} to={menu.link} /> : null}>
-                    <ListItemIcon className={classes.listItemIcon}>{menu.icon}</ListItemIcon>
+                    <ListItemIcon className={classes.listItemIcon}>{typeof menu.icon === "string" ? <i className={menu.icon} /> : menu.icon}</ListItemIcon>
                     <ListItemText
                         className={classes.listItemText}
                         classes={{ primary: classes.listItemTextPrimary, secondary: classes.listItemTextSecondary }}

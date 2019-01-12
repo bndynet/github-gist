@@ -1,15 +1,24 @@
-import * as React from 'react';
-import classNames from 'classnames';
-import { Grid, Theme, createStyles, withStyles, TextField, IconButton } from '@material-ui/core';
-import EditIcon from '@material-ui/icons/Edit';
+import * as React from "react";
+import classNames from "classnames";
+import {
+    Theme,
+    createStyles,
+    withStyles,
+    IconButton,
+    Table,
+    TableHead,
+    TableRow,
+    TableCell,
+    TableBody,
+} from "@material-ui/core";
+import EditIcon from "@material-ui/icons/Edit";
 
-import { PageHeader, Panel } from '../../../ui';
-import { Gist } from '../../../helpers/github';
-import { GridSpacing } from '@material-ui/core/Grid';
-import { Dispatch, Action } from 'redux';
-import { connect } from 'react-redux';
-import { adminGistActions, getState } from '.';
-import { push, go } from 'connected-react-router';
+import { PageHeader, Panel } from "../../../ui";
+import { Gist } from "../../../helpers/github";
+import { Dispatch, Action } from "redux";
+import { connect } from "react-redux";
+import { adminGistActions, getState } from ".";
+import { push } from "connected-react-router";
 
 const styles = (theme: Theme) =>
     createStyles({
@@ -24,7 +33,7 @@ class GistListComponent extends React.Component<
         onEditGist: (gist: Gist) => void;
         gotoEdit: (id: string) => void;
     },
-    { }
+    {}
 > {
     constructor(props) {
         super(props);
@@ -38,27 +47,39 @@ class GistListComponent extends React.Component<
         const { classes } = this.props;
         return (
             <div>
-                <PageHeader title='Gists' />
-                <Grid container={true} spacing={16 as GridSpacing}>
-                    {this.props.gists &&
-                        this.props.gists.length > 0 &&
-                        this.props.gists.map((gist) => (
-                            <Grid item={true} sm={6} key={gist.id}>
-                                <Panel
-                                    title={gist.description}
-                                    variant='primary'
-                                    closeable={false}
-                                    minimizeable={false}
-                                    actions={[
-                                        <IconButton key='2' onClick={() => this.edit(gist)}>
+                <PageHeader title={"Gists (" + this.props.gists.length + ")"} />
+                <Table className={classes.table}>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Title</TableCell>
+                            <TableCell align="right">Files</TableCell>
+                            <TableCell align="right">Public</TableCell>
+                            <TableCell align="right">Modified</TableCell>
+                            <TableCell>Actions</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {this.props.gists &&
+                            this.props.gists.length > 0 &&
+                            this.props.gists.map((gist) => (
+                                <TableRow key={gist.id}>
+                                    <TableCell component="th" scope="row">
+                                        <a href={gist.html_url} target="_blank">{gist.description}</a>
+                                    </TableCell>
+                                    <TableCell align="right">{gist.files && Object.keys(gist.files).length}</TableCell>
+                                    <TableCell align="right">
+                                        {gist.public ? <i className="fas fa-check" /> : <i className="fas fa-lock" />}</TableCell>
+                                    <TableCell>{gist.updated_at}</TableCell>
+                                    <TableCell>
+                                        <IconButton
+                                            onClick={() => this.edit(gist)}>
                                             <EditIcon />
-                                        </IconButton>,
-                                    ]}>
-                                    Updated on {gist.updated_at}
-                                </Panel>
-                            </Grid>
-                        ))}
-                </Grid>
+                                        </IconButton>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                    </TableBody>
+                </Table>
             </div>
         );
     }
@@ -79,4 +100,7 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({
     gotoEdit: (id: string) => dispatch(push(`/admin/gist/edit/${id}`)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(GistListComponent));
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(withStyles(styles)(GistListComponent));

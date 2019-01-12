@@ -1,22 +1,17 @@
-import * as React from 'react';
-import HomeIcon from '@material-ui/icons/Home';
-import ViewListIcon from '@material-ui/icons/ViewList';
-import NoteAddIcon from '@material-ui/icons/NoteAdd';
-
 const menus = [
     {
-        icon: <HomeIcon />,
+        icon: 'fas fa-fw fa-home',
         text: 'Home',
         link: '/admin',
     },
     {
-        icon: <NoteAddIcon />,
+        icon: 'fas fa-fw fa-plus',
         text: 'Create gist',
         description: '',
         link: '/admin/gist/new',
     },
     {
-        icon: <ViewListIcon />,
+        icon: 'fas fa-fw fa-list',
         text: 'Manage gist',
         description: '',
         link: '/admin/gist/list',
