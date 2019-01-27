@@ -46,6 +46,8 @@ export class GitHub {
     public getNotifications = () => this.ajax.get('/notifications');
 
     public getActivities = (username: string, pagesize: number, page: number) => this.ajax.get(`/users/${username}/events?per_page=${pagesize}&page=${page}`);
+
+    public getIssues = () => this.ajax.get('/user/issues');
 }
 
 export interface Gist {
@@ -113,6 +115,16 @@ export interface Notification {
         type?: string;
         url?: string;
     };
+}
+
+
+// can be found at https://developer.github.com/v3/issues/#list-issues
+export interface Issue {
+    id?: string;
+    html_url?: string;
+    state?: string;
+    title?: string;
+    body?: string;
 }
 
 export interface ResponseError {

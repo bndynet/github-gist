@@ -149,6 +149,7 @@ class DashboardComponent extends React.Component<
 const mapStateToProps = (state) => ({
     user: state.auth.user,
     activities: getGithubState().activities,
+    issues: getGithubState().issues,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({

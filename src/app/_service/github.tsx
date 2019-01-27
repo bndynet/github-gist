@@ -2,7 +2,7 @@ import { call, put, takeLatest } from 'redux-saga/effects';
 
 import { store } from '../../redux';
 import { getState as getAuthState } from '../auth';
-import { GitHub, Notification } from '../../helpers/github';
+import { GitHub, Notification, Issue } from '../../helpers/github';
 
 const ACTION_NOTIFICATION_REQUEST = 'github/notification/request';
 const ACTION_NOTIFICATION_SUCCESS = 'github/notification/success';
@@ -12,6 +12,10 @@ const ACTION_ACTIVITY_REQUEST = 'github/events/request';
 const ACTION_ACTIVITY_SUCCESS = 'github/events/success';
 const ACTION_ACTIVITY_FAILURE = 'github/events/failure';
 
+const ACTION_ISSUE_REQUEST = 'github/issues/request';
+const ACTION_ISSUE_SUCCESS = 'github/issues/success';
+const ACTION_ISSUE_FAILURE = 'github/issues/failure';
+
 export interface Activity {
     created_at: string;
     repo: { id: number; name: string };
@@ -20,6 +24,7 @@ export interface Activity {
 export interface State {
     notifications: Notification[];
     activities: Activity[];
+    issues: Issue[];
 }
 
 export const getState = (): State => (store && store.getState().github) || {};
@@ -46,6 +51,16 @@ export const actions = {
     activityFailure: () => ({
         type: ACTION_ACTIVITY_FAILURE,
     }),
+    issueRequest: () => ({
+        type: ACTION_ISSUE_REQUEST,
+    }),
+    issueSuccess: (issues: Issue[]) => ({
+        type: ACTION_ISSUE_SUCCESS,
+        payload: issues,
+    }),
+    issueFailure: () => ({
+        type: ACTION_ISSUE_FAILURE,
+    }),
 };
 
 export const reducer = (state: State, action) => {
@@ -59,6 +74,8 @@ export const reducer = (state: State, action) => {
 
         case ACTION_ACTIVITY_SUCCESS:
             return {...state, activities: action.payload};
+        case ACTION_ISSUE_SUCCESS:
+            return {...state, issues: action.payload};
         default:
             return {...state};
     }
@@ -85,7 +102,18 @@ function* getActivities() {
     }
 }
 
+function* getIssues() {
+    try {
+        const gh = yield call(() => new GitHub({accessToken: getAuthState().accessToken}));
+        const issues = yield call(gh.getIssues);
+        yield put(actions.issueSuccess(issues));
+    } catch (e) {
+        yield put(actions.issueFailure());
+    }
+}
+
 export function* saga() {
     yield takeLatest(ACTION_NOTIFICATION_REQUEST, getNotifications);
     yield takeLatest(ACTION_ACTIVITY_REQUEST, getActivities);
+    yield takeLatest(ACTION_ISSUE_REQUEST, getIssues);
 }
