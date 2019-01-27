@@ -43,6 +43,10 @@ export class GitHub {
         });
     }
 
+    public removeGist = (id: string) => {
+        return this.ajax.remove(`/gists/${id}`);
+    }
+
     public getNotifications = () => this.ajax.get('/notifications');
 
     public getActivities = (username: string, pagesize: number, page: number) => this.ajax.get(`/users/${username}/events?per_page=${pagesize}&page=${page}`);

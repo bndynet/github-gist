@@ -10,6 +10,7 @@ export const ACTION_GIST_UPDATE_REQUEST = 'ACTION_GIST_UPDATE_REQUEST';
 export const ACTION_GIST_UPDATE_SUCCESS = 'ACTION_GIST_UPDATE_SUCCESS';
 
 export const ACTION_GIST_EDIT = 'ACTION_GIST_EDIT';
+export const ACTION_GIST_REMOVE = 'ACTION_GIST_REMOVE';
 
 export const ACTION_GIST_GET_DETAIL_REQUEST = 'ACTION_GIST_GET_DETAIL_REQUEST';
 export const ACTION_GIST_GET_DETAIL_SUCCESS = 'ACTION_GIST_GET_DETAIL_SUCCESS';
@@ -50,6 +51,13 @@ const actions = {
     }),
     updateGistSuccess: (gist: Gist) => ({
         type: ACTION_GIST_EDIT,
+        payload: gist,
+    }),
+    removeGist: (gist: Gist, callback: () => void) => ({
+        type: ACTION_GIST_REMOVE,
+        meta: {
+            callback,
+        },
         payload: gist,
     }),
 

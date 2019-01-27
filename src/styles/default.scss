@@ -34,3 +34,13 @@ a {
 .field-static {
     padding-top: 18px;
 }
+
+th[align="right"],
+td[align="right"] {
+    text-align: right;
+}
+
+th[align="center"],
+td[align="center"] {
+    text-align: center;
+}

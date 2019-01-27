@@ -1,6 +1,6 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 import globalActions from '../../global/actions';
-import actions, { ACTION_LIST_GISTS_REQUEST, ACTION_GIST_CREATE_REQUEST, ACTION_GIST_UPDATE_REQUEST, ACTION_GIST_GET_DETAIL_REQUEST } from './actions';
+import actions, { ACTION_LIST_GISTS_REQUEST, ACTION_GIST_CREATE_REQUEST, ACTION_GIST_UPDATE_REQUEST, ACTION_GIST_GET_DETAIL_REQUEST, ACTION_GIST_REMOVE } from './actions';
 import { getState as getAuthState } from '../../auth';
 import { GitHub, Gist } from '../../../helpers/github';
 
@@ -72,11 +72,26 @@ function* getGistDetail(action) {
     }
 }
 
+function* removeGist(action) {
+    try {
+        yield put(globalActions.showLoading('Deleting...'));
+        const gh = yield call(() => new GitHub({accessToken: getAuthState().accessToken}));
+        yield call(gh.removeGist, action.payload.id);
+        yield put(globalActions.hideLoading());
+        if (action.meta && action.meta.callback) {
+            action.meta.callback();
+        }
+    } catch (e) {
+        yield put(globalActions.hideLoading());
+    }
+}
+
 function* adminGistSaga() {
     yield takeLatest(ACTION_LIST_GISTS_REQUEST, listGists);
     yield takeLatest(ACTION_GIST_CREATE_REQUEST, createGist);
     yield takeLatest(ACTION_GIST_UPDATE_REQUEST, updateGist);
     yield takeLatest(ACTION_GIST_GET_DETAIL_REQUEST, getGistDetail);
+    yield takeLatest(ACTION_GIST_REMOVE, removeGist);
 }
 
 export default adminGistSaga;
