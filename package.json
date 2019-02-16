@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/bndynet/github-gist#readme",
   "dependencies": {
+    "@bndynet/dialog": "^1.0.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.12",
     "@fortawesome/free-brands-svg-icons": "^5.6.3",
     "@fortawesome/free-regular-svg-icons": "^5.6.3",

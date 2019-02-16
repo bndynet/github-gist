@@ -1,3 +1,5 @@
+import "@bndynet/dialog/dist/dialog.css";
+
 import * as React from "react";
 import {
     Theme,
@@ -19,6 +21,7 @@ import { Dispatch, Action } from "redux";
 import { connect } from "react-redux";
 import { adminGistActions, getState } from ".";
 import { push } from "connected-react-router";
+import { confirm, notify } from "@bndynet/dialog";
 
 const styles = (theme: Theme) =>
     createStyles({
@@ -94,11 +97,12 @@ class GistListComponent extends React.Component<
     }
 
     private remove(gist: Gist) {
-        if (confirm("Are you sure you want to remove this Gist?")) {
+        confirm("Are you sure you want to remove this Gist?", () => {
             this.props.onRemoveGist(gist, () => {
+                notify("Removed successfully.", "success");
                 this.props.onListGists();
             });
-        }
+        });
     }
 }
 
