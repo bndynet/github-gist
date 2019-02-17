@@ -71,6 +71,14 @@ const styles = (theme: Theme) =>
         },
         brandTitle: {
             color: '#ffffff',
+            '& img': {
+                height: 50,
+                verticalAlign: 'middle',
+                '& + *': {
+                    position: 'relative',
+                    top: 2,
+                },
+            },
             [theme.breakpoints.down('sm')]: {
                 display: 'none',
             },
@@ -230,7 +238,8 @@ class AdminComponent extends React.Component<
                                 variant='h5'
                                 component='h1'
                                 >
-                                GitHub Gist
+                                <img src="https://static.bndy.net/images/logo_white.png" />
+                                <span>&nbsp;GitHub Gist</span>
                             </Typography>
                         </Link>
                         <IconButton
