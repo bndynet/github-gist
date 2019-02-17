@@ -2,12 +2,11 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch, Action } from 'redux';
 
-import * as randomcolor from 'randomcolor';
 import Typography from '@material-ui/core/Typography';
 import { GridSpacing } from '@material-ui/core/Grid';
 import { Theme, createStyles, withStyles, Grid } from '@material-ui/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ResponsiveContainer, LineChart, XAxis, YAxis, CartesianGrid, Legend, Line, Tooltip } from 'recharts';
+import { Chart, Serie } from '@bndynet/recharts-wrapper';
 import _groupBy from 'lodash-es/groupBy';
 import _countBy from 'lodash-es/countBy';
 import _filter from 'lodash-es/filter';
@@ -56,6 +55,7 @@ class DashboardComponent extends React.Component<
     public render() {
         const { classes } = this.props;
         const repos = [];
+        const series: Serie[] = [];
         const chartData: Array<{name: string}> = [];
         const activities = _reverse(_filter(this.props.activities, (activity: Activity) => activity.repo.name.startsWith(this.props.user.login)));
         const groups = _groupBy(activities, (activity: Activity) => {
@@ -75,6 +75,12 @@ class DashboardComponent extends React.Component<
                 if (!item[repo]) {
                     item[repo] = 0;
                 }
+            });
+        });
+        repos.forEach((repo) => {
+            series.push({
+                key: repo,
+                legendIconType: 'circle',
             });
         });
 
@@ -128,18 +134,7 @@ class DashboardComponent extends React.Component<
 
                 <PageHeader title='GitHub Activities' />
                 <Typography component='div' className={classes.chartContainer}>
-                    <ResponsiveContainer width='99%' height={320}>
-                        <LineChart data={chartData}>
-                            <XAxis dataKey='name' />
-                            <YAxis width={20} />
-                            <CartesianGrid vertical={false} strokeDasharray='3 3' />
-                            <Legend height={80} />
-                            <Tooltip />
-                            {repos && repos.map((repo) => (
-                                <Line key={repo} type='monotone' legendType='circle' dataKey={repo} connectNulls={true} stroke={randomcolor()} activeDot={{ r: 8 }} />
-                            ))}
-                        </LineChart>
-                    </ResponsiveContainer>
+                    <Chart yWidth={20} height={320} data={chartData} xKey='name' series={series} />
                 </Typography>
             </div>
         );
