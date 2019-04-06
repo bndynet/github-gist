@@ -5,8 +5,6 @@ import { LocaleType } from '../locales';
 // window.__APP_ENV__ = 'your env';
 
 export interface Config {
-    clientId?: string;
-    clientSecret?: string;
     authorizationUri?: string;
     authorizationCallbackUri?: string;
     accessTokenUri?: string;

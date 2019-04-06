@@ -26,6 +26,15 @@ import { confirm, notify } from "@bndynet/dialog";
 const styles = (theme: Theme) =>
     createStyles({
         // nothing to do
+        actionsCell: {
+            width: 140,
+        },
+        datetimeCell: {
+            width: 240,
+        },
+        miniCell: {
+            width: 80,
+        },
     });
 
 class GistListComponent extends React.Component<
@@ -52,14 +61,14 @@ class GistListComponent extends React.Component<
         return (
             <div>
                 <PageHeader title={"Gists (" + this.props.gists.length + ")"} />
-                <Table className={classes.table}>
+                <Table className={classes.table} cellPadding={0}>
                     <TableHead>
                         <TableRow>
                             <TableCell>Title</TableCell>
-                            <TableCell align="center">Files</TableCell>
-                            <TableCell align="center">Public</TableCell>
-                            <TableCell>Modified</TableCell>
-                            <TableCell align="center">Actions</TableCell>
+                            <TableCell align="center" className={classes.miniCell}>Files</TableCell>
+                            <TableCell align="center" className={classes.miniCell}>Public</TableCell>
+                            <TableCell className={classes.datetimeCell}>Modified</TableCell>
+                            <TableCell align="center" className={classes.actionsCell}>Actions</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
